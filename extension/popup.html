@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WebSentinel</title>
+  <link rel="stylesheet" href="styles/popup.css"/>
+  <style>
+    /* ── Toggles / action bar ── */
+    .toggle-switch {
+      position: relative; width: 36px; height: 18px; cursor: pointer; flex-shrink: 0;
+    }
+    .toggle-switch input { opacity:0; width:0; height:0; }
+    .toggle-slider {
+      position:absolute; inset:0; background:#333; border-radius:18px;
+      transition: 0.3s;
+    }
+    .toggle-slider:before {
+      content:''; position:absolute; width:14px; height:14px;
+      left:2px; bottom:2px; background:white; border-radius:50%;
+      transition:0.3s;
+    }
+    input:checked + .toggle-slider { background:#6c63ff; }
+    input:checked + .toggle-slider:before { transform:translateX(18px); }
+
+    .action-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 5px 14px;
+      background: rgba(255,255,255,0.02);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      gap: 8px;
+    }
+    .action-bar-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #7c83fd;
+      border: 1px solid rgba(124,131,253,0.3);
+      border-radius: 5px;
+      padding: 3px 8px;
+      background: transparent;
+    }
+    #rescanBtn {
+      background: transparent;
+      border: none;
+      color: #7c83fd;
+      font-size: 17px;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      transition: color 0.2s, transform 0.2s;
+      flex-shrink: 0;
+    }
+    #rescanBtn:hover { color:#a0a6ff; transform: rotate(20deg); }
+    #rescanBtn.scanning { color:#555; cursor:not-allowed; animation:pulse 1s infinite; }
+
+    .dashboard-footer {
+      padding: 6px 14px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      margin-top: 4px;
+    }
+    #dashboardBtn {
+      background: transparent;
+      border: 1px solid rgba(124,131,253,0.3);
+      color: #7c83fd;
+      border-radius: 5px;
+      padding: 3px 8px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    #dashboardBtn:hover { color:#a0a6ff; background:rgba(124,131,253,0.1); }
+
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+    /* ── Manual Scan ── */
+    .manual-scan {
+      padding: 8px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .manual-scan-title {
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #555;
+    }
+    .manual-url-row { display:flex; gap:6px; }
+    #manualUrlInput {
+      flex: 1;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 5px;
+      color: #e2e2f0;
+      font-size: 10px;
+      padding: 4px 8px;
+      outline: none;
+    }
+    #manualUrlInput::placeholder { color: #444; }
+    #manualUrlInput:focus { border-color: rgba(124,131,253,0.4); }
+    #manualScanBtn {
+      background: transparent;
+      border: 1px solid rgba(124,131,253,0.3);
+      color: #7c83fd;
+      border-radius: 5px;
+      padding: 4px 10px;
+      font-size: 10px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    #manualScanBtn:hover { background: rgba(124,131,253,0.1); }
+    .qr-upload-area {
+      border: 1px dashed rgba(255,255,255,0.12);
+      border-radius: 5px;
+      padding: 7px 8px;
+      text-align: center;
+      font-size: 10px;
+      color: #555;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .qr-upload-area:hover, .qr-upload-area.dragover {
+      border-color: rgba(124,131,253,0.4);
+      color: #7c83fd;
+    }
+    .dashboard-footer {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #dashboardBtn { margin-left: auto; }
+  </style>
+</head>
+<body>
+
+  <!-- Header: logo + rescan icon + extension on/off -->
+  <div class="header">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <img src="icons/icon48.png" class="logo-icon" alt=""/>
+      <div class="logo">WebSentinel</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <button id="rescanBtn" title="Re-scan current page">🔄</button>
+      <span id="toggleLabel" style="font-size:10px;color:#888;"></span>
+      <label class="toggle-switch" title="Enable / disable extension">
+        <input type="checkbox" id="extensionToggle" checked/>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Action bar: ad blocker + screenshot permission -->
+  <div class="action-bar">
+    <div class="action-bar-item">
+      <span>🚫 Ad Blocker</span>
+      <label class="toggle-switch" title="Block advertisements and trackers">
+        <input type="checkbox" id="adBlockToggle"/>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div class="action-bar-item">
+      <span>🔍 Deep Scanning</span>
+      <label class="toggle-switch" title="Allow extension to scan links and QR codes">
+        <input type="checkbox" id="screenshotToggle"/>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Threat Level Card -->
+  <div class="threat-card" id="threatCard">
+    <div class="threat-score" id="threatScore">--</div>
+    <div class="threat-label" id="threatLabel">Scanning...</div>
+    <div class="threat-host"  id="threatHost"></div>
+  </div>
+
+  <!-- Score Bar -->
+  <div class="score-bar-container">
+    <div class="score-bar" id="scoreBar"></div>
+  </div>
+  <div class="score-labels">
+    <span>SAFE</span><span>LOW</span><span>SUSPICIOUS</span><span>PHISHING</span>
+  </div>
+
+  <!-- Whitelist bar -->
+  <div class="whitelist-bar" id="whitelistBar">
+    <span id="whitelistStatus">...</span>
+    <button id="whitelistBtn" class="wl-btn">...</button>
+  </div>
+
+  <!-- Detection Flags -->
+  <div class="section-title">⚠️ Detection Flags</div>
+  <div class="flags-container" id="flagsContainer">
+    <div class="loading">Analyzing current page...</div>
+  </div>
+
+  <!-- Check Summary -->
+  <div class="section-title">🔍 Check Summary</div>
+  <div class="checks-container" id="checksContainer"></div>
+
+  <!-- Whitelist Manager -->
+  <div class="section-title">🔒 My Whitelist
+    <span id="wlToggle" style="float:right;cursor:pointer;font-weight:normal;color:#7c83fd;font-size:10px">▼ Show</span>
+  </div>
+  <div class="whitelist-manager" id="whitelistManager" style="display:none">
+    <div class="wl-list" id="wlList"></div>
+    <div class="wl-empty" id="wlEmpty" style="display:none">No sites whitelisted yet.</div>
+  </div>
+
+  <!-- Recent History -->
+  <div class="section-title">📋 Recent Sites</div>
+  <div class="history-container" id="historyContainer"></div>
+
+  <!-- Manual Scan -->
+  <div class="manual-scan">
+    <div class="manual-scan-title">🔎 Manual Scan</div>
+    <div class="manual-url-row">
+      <input type="text" id="manualUrlInput" placeholder="Paste a URL to scan…" spellcheck="false"/>
+      <button id="manualScanBtn">Scan</button>
+    </div>
+    <label class="qr-upload-area" id="qrUploadArea">
+      <input type="file" id="qrImageInput" accept="image/*" style="display:none"/>
+      <span id="qrUploadText">📷 Click or drop image to scan QR code</span>
+    </label>
+  </div>
+
+  <!-- Dashboard footer: manual scan result + dashboard link -->
+  <div class="dashboard-footer">
+    <span id="manualResult" style="display:none"></span>
+    <button id="dashboardBtn">📊 Open Dashboard</button>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

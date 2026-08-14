@@ -1,0 +1,248 @@
+/* WebSentinel Popup Styles */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  width: 360px;
+  min-height: 500px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #0f0f1a;
+  color: #e0e0e0;
+  font-size: 13px;
+}
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #2a2a4a;
+}
+.logo {
+  font-size: 18px;
+  font-weight: bold;
+  color: #7c83fd;
+  letter-spacing: 1px;
+  display: flex;            /* align icon + text horizontally */
+  align-items: center;      /* vertical alignment */
+}
+
+.logo-icon {
+  width: 24px;              /* scale to match text size */
+  height: 24px;
+  margin-right: 6px;        /* spacing between icon and text */
+}
+.subtitle {
+  font-size: 10px;
+  color: #888;
+  text-align: justify;
+  text-align-last: justify;
+}
+
+
+/* Threat Card */
+.threat-card {
+  margin: 16px;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+  background: #1a1a2e;
+  border: 2px solid #2a2a4a;
+}
+.threat-card.safe    { border-color: #00C853; background: rgba(0,200,83,0.08); }
+.threat-card.low     { border-color: #FFD700; background: rgba(255,215,0,0.08); }
+.threat-card.suspicious { border-color: #FF8C00; background: rgba(255,140,0,0.08); }
+.threat-card.phishing   { border-color: #FF1744; background: rgba(255,23,68,0.08); }
+
+.threat-score {
+  font-size: 48px;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.safe    .threat-score { color: #00C853; }
+.low     .threat-score { color: #FFD700; }
+.suspicious .threat-score { color: #FF8C00; }
+.phishing   .threat-score { color: #FF1744; }
+
+.threat-label {
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.threat-host { font-size: 11px; color: #888; word-break: break-all; }
+
+/* Score Bar */
+.score-bar-container {
+  margin: 0 16px 4px;
+  height: 8px;
+  background: #1a1a2e;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.score-bar {
+  height: 100%;
+  width: 0%;
+  border-radius: 4px;
+  transition: width 0.8s ease, background 0.5s ease;
+  background: linear-gradient(90deg, #00C853, #FFD700, #FF8C00, #FF1744);
+}
+.score-labels {
+  display: flex;
+  justify-content: space-between;
+  margin: 2px 16px 12px;
+  font-size: 9px;
+  color: #555;
+}
+
+/* Section Title */
+.section-title {
+  padding: 6px 16px 4px;
+  font-size: 11px;
+  font-weight: bold;
+  color: #7c83fd;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Flags */
+.flags-container {
+  margin: 0 16px 12px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+.flag-item {
+  background: rgba(255,100,0,0.1);
+  border-left: 3px solid #FF8C00;
+  padding: 6px 10px;
+  margin-bottom: 5px;
+  border-radius: 0 6px 6px 0;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #ffb74d;
+}
+.flag-item.critical { border-color: #FF1744; background: rgba(255,23,68,0.1); color: #ff6b6b; }
+.no-flags { color: #00C853; font-size: 12px; padding: 8px; }
+.loading { color: #888; font-size: 12px; padding: 8px; }
+
+/* Checks */
+.checks-container {
+  margin: 0 16px 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+.check-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1a1a2e;
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 10px;
+}
+.check-name { color: #aaa; }
+.check-status { font-weight: bold; font-size: 9px; }
+.check-status.safe   { color: #00C853; }
+.check-status.risk   { color: #FF8C00; }
+.check-status.critical { color: #FF1744; }
+
+/* History */
+.history-container {
+  margin: 0 16px 16px;
+  max-height: 100px;
+  overflow-y: auto;
+}
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 8px;
+  margin-bottom: 3px;
+  background: #1a1a2e;
+  border-radius: 6px;
+  font-size: 10px;
+}
+.history-host { color: #aaa; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.history-badge {
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: bold;
+  margin-left: 6px;
+}
+.badge-safe       { background: #00C85322; color: #00C853; }
+.badge-low        { background: #FFD70022; color: #FFD700; }
+.badge-suspicious { background: #FF8C0022; color: #FF8C00; }
+.badge-phishing   { background: #FF174422; color: #FF1744; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #0f0f1a; }
+::-webkit-scrollbar-thumb { background: #2a2a4a; border-radius: 2px; }
+
+/* Whitelist Bar */
+.whitelist-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 14px;           /* match rescan bar padding */
+  background: rgba(255,255,255,0.03);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  font-size: 10px;
+  margin-top: 6px;             /* gap between the two bars */         /* optional: soften edges */
+}
+.wl-btn {
+  padding: 5px 14px;
+  border: none;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.wl-btn.add    { background: #00C853; color: #000; }
+.wl-btn.remove { background: #FF1744; color: #fff; }
+.wl-btn.add:hover    { background: #00a844; }
+.wl-btn.remove:hover { background: #cc0033; }
+#whitelistStatus { font-size: 11px; color: #aaa; }
+
+/* Whitelist Manager */
+.whitelist-manager {
+  margin: 0 16px 12px;
+}
+.wl-list { display: flex; flex-direction: column; gap: 4px; }
+.wl-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1a1a2e;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 11px;
+}
+.wl-item-domain { color: #00C853; flex: 1; }
+.wl-remove-btn {
+  background: none;
+  border: 1px solid #ff444455;
+  color: #ff6666;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 10px;
+  cursor: pointer;
+  margin-left: 8px;
+}
+.wl-remove-btn:hover { background: #ff444422; }
+.wl-empty { color: #555; font-size: 11px; padding: 6px; }
+
+/* Whitelisted state card */
+.threat-card.whitelisted {
+  border-color: #4CAF50;
+  background: rgba(76,175,80,0.08);
+}
+.whitelisted .threat-score { color: #4CAF50; font-size: 28px; }

@@ -1,0 +1,5 @@
+{
+  "max_url_length": 200,
+  "vocab_size": 100,
+  "accuracy": 0.86
+}
